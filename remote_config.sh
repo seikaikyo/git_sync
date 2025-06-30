@@ -26,22 +26,27 @@ configure_remotes() {
 configure_gitlab_remote() {
     echo -e "${BLUE}檢查 GitLab 遠端配置...${NC}"
     
+    # 首先查找明確命名為 gitlab 的遠端
     if git remote -v | grep -q "gitlab"; then
         DETECTED_GITLAB_REMOTE=$(git remote -v | grep "gitlab" | grep "(push)" | head -n1 | awk '{print $1}')
         echo -e "${GREEN}✓ 找到 GitLab 遠端：${DETECTED_GITLAB_REMOTE}${NC}"
-    elif git remote -v | grep -q "origin"; then
-        # 檢查 origin 是否指向 GitLab
-        origin_url=$(git remote get-url origin 2>/dev/null)
-        if echo "$origin_url" | grep -q "gitlab"; then
-            DETECTED_GITLAB_REMOTE="origin"
-            echo -e "${GREEN}✓ 'origin' 遠端指向 GitLab：${DETECTED_GITLAB_REMOTE}${NC}"
-        else
-            DETECTED_GITLAB_REMOTE="origin"
-            echo -e "${YELLOW}? 假設 'origin' 是您的 GitLab 遠端${NC}"
-        fi
     else
-        echo -e "${RED}✗ 未找到 GitLab 遠端${NC}"
-        prompt_add_gitlab_remote
+        # 查找指向 GitLab 的 URL
+        local gitlab_remote=""
+        while read -r remote_name remote_url _; do
+            if echo "$remote_url" | grep -q "gitlab"; then
+                gitlab_remote="$remote_name"
+                break
+            fi
+        done < <(git remote -v | grep "(push)")
+        
+        if [ ! -z "$gitlab_remote" ]; then
+            DETECTED_GITLAB_REMOTE="$gitlab_remote"
+            echo -e "${GREEN}✓ 找到指向 GitLab 的遠端：${DETECTED_GITLAB_REMOTE}${NC}"
+        else
+            echo -e "${RED}✗ 未找到 GitLab 遠端${NC}"
+            prompt_add_gitlab_remote
+        fi
     fi
 }
 
@@ -73,9 +78,38 @@ prompt_add_gitlab_remote() {
 configure_github_remote() {
     echo -e "${BLUE}檢查 GitHub 遠端配置...${NC}"
     
-    if git remote -v | grep -q "github"; then
-        DETECTED_GITHUB_REMOTE=$(git remote -v | grep "github" | grep "(push)" | head -n1 | awk '{print $1}')
-        echo -e "${GREEN}✓ 找到 GitHub 遠端：${DETECTED_GITHUB_REMOTE}${NC}"
+    # 首先查找明確命名為 github 的遠端
+    if git remote -v | grep -q "github" | head -1; then
+        local github_remote_name=$(git remote -v | grep "github" | grep "(push)" | head -n1 | awk '{print $1}')
+        local github_remote_url=$(git remote -v | grep "github" | grep "(push)" | head -n1 | awk '{print $2}')
+        
+        # 確認 URL 確實指向 GitHub
+        if echo "$github_remote_url" | grep -q "github.com"; then
+            DETECTED_GITHUB_REMOTE="$github_remote_name"
+            echo -e "${GREEN}✓ 找到 GitHub 遠端：${DETECTED_GITHUB_REMOTE}${NC}"
+        else
+            # 遠端名稱包含 github 但 URL 不是指向 GitHub
+            echo -e "${YELLOW}警告：遠端 '$github_remote_name' 命名包含 'github' 但 URL 不指向 GitHub${NC}"
+            find_github_by_url
+        fi
+    else
+        find_github_by_url
+    fi
+}
+
+# 根據 URL 查找 GitHub 遠端
+find_github_by_url() {
+    local github_remote=""
+    while read -r remote_name remote_url _; do
+        if echo "$remote_url" | grep -q "github.com"; then
+            github_remote="$remote_name"
+            break
+        fi
+    done < <(git remote -v | grep "(push)")
+    
+    if [ ! -z "$github_remote" ]; then
+        DETECTED_GITHUB_REMOTE="$github_remote"
+        echo -e "${GREEN}✓ 找到指向 GitHub 的遠端：${DETECTED_GITHUB_REMOTE}${NC}"
     else
         echo -e "${RED}✗ 未找到 GitHub 遠端${NC}"
         prompt_add_github_remote
