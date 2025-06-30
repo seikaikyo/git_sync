@@ -391,4 +391,14 @@ git commit -m "test: 新增 XXX 測試"
 
 ---
 
-**🎉 感謝使用 Git 同步工具！如有問題或建議，歡迎開啟 [Issue](../../issues) 討論！**
+## ⚠️ 關於 GitGuardian 警報
+
+本專案的測試腳本包含假的 API 金鑰用於測試安全檢查功能。
+這些都是無效的測試資料，不會造成安全風險。
+
+如果您在使用時收到 GitGuardian 警報，請：
+
+1. 確認這些是測試檔案中的假資料
+2. 在 GitGuardian 中標記為 "Test data"
+3. 或使用 .gitguardian.yml 配置忽略
+4. **🎉 感謝使用 Git 同步工具！如有問題或建議，歡迎開啟 [Issue](../../issues) 討論！**

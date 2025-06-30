@@ -1,0 +1,33 @@
+# .gitguardian.yml - GitGuardian 配置檔
+# 用於排除測試檔案和假資料
+
+# 指定要忽略的檔案路徑
+paths-ignore:
+  - "**/*test*.tmp"
+  - "test_*.sh"
+  - "**/test_security_patterns.tmp"
+
+# 指定要忽略的檔案模式
+filename-patterns-ignore:
+  - "*.tmp"
+  - "test_*"
+
+# 忽略特定的機密類型在特定檔案中
+secrets-ignore:
+  - match: "AIzaSy_FAKE_PLACEHOLDER_FOR_TESTING_ONLY"
+    name: "Google API Key (Test Data)"
+    file: "test_git_sync.sh"
+  
+  - match: "sk_live_FAKE_PLACEHOLDER_FOR_TESTING_ONLY"
+    name: "Stripe Key (Test Data)" 
+    file: "test_git_sync.sh"
+
+  - match: "ghp_FAKE_PLACEHOLDER_FOR_TESTING_ONLY_0000"
+    name: "GitHub Token (Test Data)"
+    file: "test_git_sync.sh"
+
+# 自訂檢測規則
+custom-policies:
+  - name: "ignore-test-files"
+    description: "忽略測試檔案中的假資料"
+    severity: "info"
