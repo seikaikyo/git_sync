@@ -365,17 +365,17 @@ test_security_check() {
     local test_file="test_security_patterns.tmp"
 
     cat >"$test_file" <<'EOF'
-# 測試用的安全模式檔案
+# 測試用的安全模式檔案 (全部為假值，僅供測試偵測功能)
 password=FAKE_PASSWORD_FOR_TESTING
-api_key=AKIAIOSFODNN7EXAMPLE
-database_url=postgresql://user:pass@localhost/db
-email=test@example.com
-phone=0912345678
-credit_card=1234 5678 9012 3456
-private_key=-----BEGIN RSA PRIVATE KEY-----
-github_token=ghp_FAKE_PLACEHOLDER_FOR_TESTING_ONLY_0000
-google_api=AIzaSy_FAKE_PLACEHOLDER_FOR_TESTING_ONLY
-stripe_key=sk_live_FAKE_PLACEHOLDER_FOR_TESTING_ONLY
+api_key=FAKE_AKIAIOSFODNN7EXAMPLE
+database_url=postgresql://fake_user:fake_pass@localhost/fake_db
+email=fake_test@example.com
+phone=0900000000
+credit_card=0000 0000 0000 0000
+private_key=-----BEGIN FAKE RSA PRIVATE KEY-----
+github_token=ghp_FAKE_TOKEN_FOR_TESTING_00000000000
+google_api=FAKE_AIzaSy_GOOGLE_API_KEY_FOR_TESTING
+stripe_key=sk_test_FAKE_STRIPE_KEY_FOR_TESTING_ONLY
 EOF
 
     if [ -f "$test_file" ]; then
