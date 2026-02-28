@@ -17,9 +17,9 @@ secrets-ignore:
   - match: "AIzaSy_FAKE_PLACEHOLDER_FOR_TESTING_ONLY"
     name: "Google API Key (Test Data)"
     file: "test_git_sync.sh"
-  
+
   - match: "sk_live_FAKE_PLACEHOLDER_FOR_TESTING_ONLY"
-    name: "Stripe Key (Test Data)" 
+    name: "Stripe Key (Test Data)"
     file: "test_git_sync.sh"
 
   - match: "ghp_FAKE_PLACEHOLDER_FOR_TESTING_ONLY_0000"
